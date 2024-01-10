@@ -58,27 +58,55 @@ public struct AxisContribution<B, F>: View where B: View, F: View {
     
     public var body: some View {
         ScrollViewReader { proxy in
-            VStack(alignment: .trailing, spacing: constant.spacing * 1.6) {
-                ScrollView(constant.axisMode == .horizontal ? .horizontal : .vertical, showsIndicators: false) {
-                    if constant.axisMode == .horizontal {
-                        HStack(spacing: 0) {
-                            content
-                            Spacer()
-                                .frame(width: 0, height: 0)
-                                .id(trailing)
-                                .onAppear {
-                                    proxy.scrollTo(trailing, anchor: .trailing)
-                                }
+            HStack(alignment: .center, spacing: 0) {
+                // Days always view
+                VStack {
+                    VStack(alignment: .trailing, spacing: 0) {
+                        Group {
+                            Text("S")
+                                
+                            Text("M")
+                                
+                            Text("T")
+                                
+                            Text("W")
+                                
+                            Text("T")
+                                
+                            Text("F")
+                                
+                            Text("S")
                         }
-                        .contentShape(Rectangle())
-                    }else {
-                        VStack(spacing: 0) {
-                            content
-                        }
-                        .contentShape(Rectangle())
+                        .font(.system(size: 13))
+                        .padding(.top, constant.spacing)
                     }
+                    .padding(.bottom, constant.spacing * 1.6)
+                    .frame(width: 32)                    
+                    
                 }
-                levelView
+                VStack(alignment: .trailing, spacing: constant.spacing * 1.6) {
+                    ScrollView(constant.axisMode == .horizontal ? .horizontal : .vertical, showsIndicators: false) {
+                        if constant.axisMode == .horizontal {
+                            HStack(spacing: 0) {
+                                content
+                                    .padding()
+                                Spacer()
+                                    .frame(width: 0, height: 0)
+                                    .id(trailing)
+                                    .onAppear {
+                                        proxy.scrollTo(trailing, anchor: .trailing)
+                                    }
+                            }
+                            .contentShape(Rectangle())
+                        }else {
+                            VStack(spacing: 0) {
+                                content
+                            }
+                            .contentShape(Rectangle())
+                        }
+                    }
+                    levelView
+                }
             }
         }
         .environmentObject(store)

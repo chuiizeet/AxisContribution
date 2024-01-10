@@ -51,24 +51,28 @@ struct ACGridStack<B, F>: View where B: View, F: View {
             if constant.axisMode == .horizontal {
                 HStack(alignment: .top, spacing: spacing) {
                     VStack(alignment: .trailing, spacing: 0) {
-                        Text("M")
+                        Text("a")
                             .frame(height: rowSize.height)
                             .padding(.top, rowSize.height * 2 + spacing * 2)
-                        Text("W")
+                        Text("b")
                             .frame(height: rowSize.height)
                             .padding(.top, rowSize.height + spacing * 2)
-                        Text("F")
+                        Text("c")
                             .frame(height: rowSize.height)
                             .padding(.top, rowSize.height + spacing * 2)
                     }
-                    ForEach(Array(store.datas.enumerated()), id: \.offset) { column, datas in
+                    .opacity(0)
+                    ForEach(Array(store.datas.enumerated()), id: \.offset) {
+                        column, datas in
                         LazyVStack(alignment: .leading, spacing: spacing) {
                             Rectangle()
                                 .fill(Color.clear)
                                 .frame(width: rowSize.height, height: rowSize.height)
-                                .overlay(getMonthTitle(column), alignment: .leading)
+                                .overlay(getMonthTitle(column), alignment: .center)
                             ForEach(Array(datas.enumerated()), id: \.offset) { row, data in
                                 getRowView(column: column, row: row, data: data)
+                                    .border(Calendar.current.isDate(Date(), equalTo: data.date, toGranularity: .day) ? .black : .clear)
+                                    .opacity(data.date.timeIntervalSinceNow.sign == .plus ? 0.5 : 1.0)
                             }
                         }
                     }

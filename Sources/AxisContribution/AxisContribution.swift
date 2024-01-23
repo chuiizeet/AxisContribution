@@ -106,6 +106,7 @@ public struct AxisContribution<B, F>: View where B: View, F: View {
                         }
                     }
                     levelView
+                        .opacity(0)
                 }
             }
         }

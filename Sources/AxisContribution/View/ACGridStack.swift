@@ -71,8 +71,8 @@ struct ACGridStack<B, F>: View where B: View, F: View {
                                 .overlay(getMonthTitle(column), alignment: .center)
                             ForEach(Array(datas.enumerated()), id: \.offset) { row, data in
                                 getRowView(column: column, row: row, data: data)
-                                    .border(Calendar.current.isDate(Date(), equalTo: data.date, toGranularity: .day) ? .black : .clear)
-                                    .opacity(data.date.timeIntervalSinceNow.sign == .plus ? 0.5 : 1.0)
+                                    .border(Calendar.current.isDate(Date(), equalTo: data.date, toGranularity: .day) ? .black : .clear, width: 1.75)
+                                    .opacity(data.date.timeIntervalSinceNow.sign == .plus ? 0.33 : 1.0)
                             }
                         }
                     }
@@ -133,6 +133,7 @@ struct ACGridStack<B, F>: View where B: View, F: View {
                             .lineLimit(1)
                             .fixedSize(horizontal: true, vertical: false)
                             .takeSize($_titleSize)
+                            .font(.system(size: 12, weight: .medium))
                     }
                 } else {
                     let date = store.datas[column][0].date

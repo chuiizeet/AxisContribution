@@ -37,6 +37,8 @@ struct ACGridStack<B, F>: View where B: View, F: View {
     @State private var titleWidth: CGFloat = .zero
     @State private var _titleSize: CGSize = .zero
     
+    private let textColor = Color(hex: "DEE2E6")
+    
     var body: some View {
         content
             .font(store.constant.font)
@@ -71,8 +73,8 @@ struct ACGridStack<B, F>: View where B: View, F: View {
                                 .overlay(getMonthTitle(column), alignment: .center)
                             ForEach(Array(datas.enumerated()), id: \.offset) { row, data in
                                 getRowView(column: column, row: row, data: data)
-                                    .border(Calendar.current.isDate(Date(), equalTo: data.date, toGranularity: .day) ? .black : .clear, width: 1.75)
-                                    .opacity(data.date.timeIntervalSinceNow.sign == .plus ? 0.33 : 1.0)
+                                    .border(Calendar.current.isDate(Date(), equalTo: data.date, toGranularity: .day) ? Color(hex: "242423") : .clear, width: 1.25)
+                                    .opacity(data.date.timeIntervalSinceNow.sign == .plus ? 0.5 : 1.0)
                             }
                         }
                     }
@@ -134,6 +136,7 @@ struct ACGridStack<B, F>: View where B: View, F: View {
                             .fixedSize(horizontal: true, vertical: false)
                             .takeSize($_titleSize)
                             .font(.system(size: 12, weight: .medium))
+                            .foregroundColor(textColor)
                     }
                 } else {
                     let date = store.datas[column][0].date
@@ -142,6 +145,7 @@ struct ACGridStack<B, F>: View where B: View, F: View {
                             .lineLimit(1)
                             .fixedSize(horizontal: true, vertical: false)
                             .takeSize($_titleSize)
+                            .foregroundColor(textColor)
                     }
                 }
             }

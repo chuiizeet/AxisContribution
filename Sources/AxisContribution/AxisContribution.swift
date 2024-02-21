@@ -56,6 +56,8 @@ public struct AxisContribution<B, F>: View where B: View, F: View {
     private var defaultRowSize: CGFloat = 11
     @Namespace private var trailing
     
+    private let textColor = Color(hex: "DEE2E6")
+    
     public var body: some View {
         ScrollViewReader { proxy in
             HStack(alignment: .center, spacing: 0) {
@@ -63,6 +65,10 @@ public struct AxisContribution<B, F>: View where B: View, F: View {
                 VStack {
                     VStack(alignment: .trailing, spacing: 0) {
                         Group {
+                            HStack {
+                                Spacer()
+                                
+                            }
                             Text("S")
                                 
                             Text("M")
@@ -77,10 +83,12 @@ public struct AxisContribution<B, F>: View where B: View, F: View {
                                 
                             Text("S")
                         }
-                        .font(.system(size: 13))
-                        .padding(.top, constant.spacing)
+                        .font(.system(size: 12))
+                        .padding(.top, constant.spacing * 0.6)
                     }
-                    .padding(.bottom, constant.spacing * 1.6)
+                    .foregroundColor(textColor)
+                    .padding(.bottom, 14)
+                    .padding(.horizontal, 4)
                     .frame(width: 32)                    
                     
                 }
@@ -94,10 +102,14 @@ public struct AxisContribution<B, F>: View where B: View, F: View {
                                     .frame(width: 0, height: 0)
                                     .id(trailing)
                                     .onAppear {
-                                        proxy.scrollTo(trailing, anchor: .trailing)
+                                        // FIXME: SwiftUI Bullshit
+                                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.1, execute: {
+                                            proxy.scrollTo(trailing, anchor: .trailing)
+                                        })
                                     }
                             }
                             .contentShape(Rectangle())
+                            .padding(.leading, -24 + 4) // 32 - 8 + spacing
                         }else {
                             VStack(spacing: 0) {
                                 content
@@ -106,7 +118,8 @@ public struct AxisContribution<B, F>: View where B: View, F: View {
                         }
                     }
                     levelView
-                        .opacity(0)
+                        .padding(.bottom, 12)
+                        .padding(.horizontal)
                 }
             }
         }
@@ -155,6 +168,7 @@ public struct AxisContribution<B, F>: View where B: View, F: View {
                 Text(constant.levelLabel == .moreOrLess ? "Less" : "0")
                     .font(constant.font)
                     .opacity(0.6)
+                    .foregroundColor(textColor)
                 HStack(spacing: 0) {
                     ForEach(ACLevel.allCases, id:\.self) { level in
                         ZStack {
@@ -167,6 +181,7 @@ public struct AxisContribution<B, F>: View where B: View, F: View {
                 Text(constant.levelLabel == .moreOrLess ? "More" : "\(constant.levelSpacing * 4)+")
                     .font(constant.font)
                     .opacity(0.6)
+                    .foregroundColor(textColor)
             }
         }
     }
@@ -270,6 +285,8 @@ public extension AxisContribution where B : View, F : View {
 
 struct AxisContribution_Previews: PreviewProvider {
     static var previews: some View {
-        AxisContribution(constant: .init(), source: [:])
+        AxisContribution(constant: .init(
+            levelLabel: .number
+        ), source: [:])
     }
 }

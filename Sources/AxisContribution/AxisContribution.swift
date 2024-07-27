@@ -27,22 +27,22 @@ import SwiftUI
 
 /// Defines the unit of contribution level.
 enum ACLevel: Int, CaseIterable {
-    case zero = 0, first, second, third, fourth
+    case zero = 0, first, second, third, fourth, fifth
     
     /// Opacity value according to level.
     var opacity: CGFloat {
         switch self {
-        case .zero:     return 0
-        case .first:    return 0.3
-        case .second:   return 0.5
-        case .third:    return 0.7
-        case .fourth:   return 0.9
+        case .zero: return 0
+        case .first: return 0.2
+        case .second: return 0.4
+        case .third: return 0.6
+        case .fourth: return 0.8
+        case .fifth: return 1.0
         }
     }
 }
 
 public struct AxisContribution<B, F>: View where B: View, F: View {
-    
     @Environment(\.colorScheme) private var colorScheme
     @StateObject private var store = ACDataStore()
     
@@ -56,7 +56,7 @@ public struct AxisContribution<B, F>: View where B: View, F: View {
     private var defaultRowSize: CGFloat = 11
     @Namespace private var trailing
     
-    private let textColor = Color(hex: "DEE2E6")
+    private let textColor = Color(hex: "A3A3A3")
     
     public var body: some View {
         ScrollViewReader { proxy in
@@ -67,7 +67,6 @@ public struct AxisContribution<B, F>: View where B: View, F: View {
                         Group {
                             HStack {
                                 Spacer()
-                                
                             }
                             Text("S")
                                 
@@ -89,8 +88,7 @@ public struct AxisContribution<B, F>: View where B: View, F: View {
                     .foregroundColor(textColor)
                     .padding(.bottom, 14)
                     .padding(.horizontal, 4)
-                    .frame(width: 32)                    
-                    
+                    .frame(width: 32)
                 }
                 VStack(alignment: .trailing, spacing: constant.spacing * 1.6) {
                     ScrollView(constant.axisMode == .horizontal ? .horizontal : .vertical, showsIndicators: false) {
@@ -103,14 +101,14 @@ public struct AxisContribution<B, F>: View where B: View, F: View {
                                     .id(trailing)
                                     .onAppear {
                                         // FIXME: SwiftUI Bullshit
-                                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.1, execute: {
+                                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
                                             proxy.scrollTo(trailing, anchor: .trailing)
-                                        })
+                                        }
                                     }
                             }
                             .contentShape(Rectangle())
                             .padding(.leading, -24 + 4) // 32 - 8 + spacing
-                        }else {
+                        } else {
                             VStack(spacing: 0) {
                                 content
                             }
@@ -132,7 +130,7 @@ public struct AxisContribution<B, F>: View where B: View, F: View {
         })
     }
     
-    //MARK: - Properties
+    // MARK: - Properties
     
     /// A content view that displays a grid view.
     private var content: some View {
@@ -170,7 +168,7 @@ public struct AxisContribution<B, F>: View where B: View, F: View {
                     .opacity(0.6)
                     .foregroundColor(textColor)
                 HStack(spacing: 0) {
-                    ForEach(ACLevel.allCases, id:\.self) { level in
+                    ForEach(ACLevel.allCases, id: \.self) { level in
                         ZStack {
                             getBackgroundView(nil, nil)
                             getForegroundView(nil, nil)
@@ -178,15 +176,14 @@ public struct AxisContribution<B, F>: View where B: View, F: View {
                         }
                     }.scaleEffect(0.82)
                 }
-                Text(constant.levelLabel == .moreOrLess ? "More" : "\(constant.levelSpacing * 4)+")
+                Text(constant.levelLabel == .moreOrLess ? "More" : "\(constant.levelSpacing * (ACLevel.allCases.count - 1))+")
                     .font(constant.font)
-                    .opacity(0.6)
                     .foregroundColor(textColor)
             }
         }
     }
     
-    //MARK: - Methods
+    // MARK: - Methods
     
     /// The background view of the row view.
     /// - Parameters:
@@ -197,7 +194,7 @@ public struct AxisContribution<B, F>: View where B: View, F: View {
         Group {
             if let background = background {
                 background(indexSet, data)
-            }else {
+            } else {
                 defaultBackground
             }
         }
@@ -212,7 +209,7 @@ public struct AxisContribution<B, F>: View where B: View, F: View {
         Group {
             if let foreground = foreground {
                 foreground(indexSet, data)
-            }else {
+            } else {
                 defaultForeground
             }
         }
@@ -221,15 +218,14 @@ public struct AxisContribution<B, F>: View where B: View, F: View {
     /// Fetch data.
     private func fetch() {
         if let externalDatas = externalDatas {
-            store.setup(constant: self.constant, external: externalDatas)
-        }else {
-            store.setup(constant: self.constant, source: self.sourceDatas)
+            store.setup(constant: constant, external: externalDatas)
+        } else {
+            store.setup(constant: constant, source: sourceDatas)
         }
     }
 }
 
 public extension AxisContribution where B == EmptyView, F == EmptyView {
-
     /// Initializes `AxisContribution`
     /// - Parameters:
     ///   - constant: Settings that define the contribution view.
@@ -249,8 +245,7 @@ public extension AxisContribution where B == EmptyView, F == EmptyView {
     }
 }
 
-public extension AxisContribution where B : View, F : View {
-    
+public extension AxisContribution where B: View, F: View {
     /// Initializes `AxisContribution`
     /// - Parameters:
     ///   - constant: Settings that define the contribution view.
@@ -260,7 +255,8 @@ public extension AxisContribution where B : View, F : View {
     init(constant: ACConstant = .init(),
          source sourceDates: [Date: ACData] = [:],
          @ViewBuilder background: @escaping (ACIndexSet?, ACData?) -> B,
-         @ViewBuilder foreground: @escaping (ACIndexSet?, ACData?) -> F) {
+         @ViewBuilder foreground: @escaping (ACIndexSet?, ACData?) -> F)
+    {
         self.constant = constant
         self.sourceDatas = sourceDates
         self.background = background
@@ -275,7 +271,8 @@ public extension AxisContribution where B : View, F : View {
     ///   - externalDatas: Externally passed data. If data exists, external data takes precedence.
     init(constant: ACConstant = .init(), external externalDatas: [[ACData]]? = nil,
          @ViewBuilder background: @escaping (ACIndexSet?, ACData?) -> B,
-         @ViewBuilder foreground: @escaping (ACIndexSet?, ACData?) -> F) {
+         @ViewBuilder foreground: @escaping (ACIndexSet?, ACData?) -> F)
+    {
         self.constant = constant
         self.background = background
         self.foreground = foreground

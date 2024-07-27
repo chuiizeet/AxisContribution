@@ -37,7 +37,7 @@ struct ACGridStack<B, F>: View where B: View, F: View {
     @State private var titleWidth: CGFloat = .zero
     @State private var _titleSize: CGSize = .zero
     
-    private let textColor = Color(hex: "DEE2E6")
+    private let textColor = Color(hex: "A3A3A3")
     
     var body: some View {
         content
@@ -73,7 +73,6 @@ struct ACGridStack<B, F>: View where B: View, F: View {
                                 .overlay(getMonthTitle(column), alignment: .center)
                             ForEach(Array(datas.enumerated()), id: \.offset) { row, data in
                                 getRowView(column: column, row: row, data: data)
-                                    .border(Calendar.current.isDate(Date(), equalTo: data.date, toGranularity: .day) ? Color(hex: "242423") : .clear, width: 1.25)
                                     .opacity(data.date.timeIntervalSinceNow.sign == .plus ? 0.5 : 1.0)
                             }
                         }
@@ -172,16 +171,17 @@ struct ACGridStack<B, F>: View where B: View, F: View {
     private func getOpacity(count: Int) -> CGFloat {
         if count == 0 {
             return ACLevel.zero.opacity
-        } else if ACLevel.first.rawValue * store.constant.levelSpacing >= count {
+        } else if 1 * store.constant.levelSpacing >= count {
             return ACLevel.first.opacity
-        } else if ACLevel.second.rawValue * store.constant.levelSpacing >= count {
+        } else if 2 * store.constant.levelSpacing >= count {
             return ACLevel.second.opacity
-        } else if ACLevel.third.rawValue * store.constant.levelSpacing >= count {
+        } else if 3 * store.constant.levelSpacing >= count {
             return ACLevel.third.opacity
-        } else if ACLevel.fourth.rawValue * store.constant.levelSpacing >= count {
+        } else if 4 * store.constant.levelSpacing > count && (5 * store.constant.levelSpacing) > count {
             return ACLevel.fourth.opacity
+        } else {
+            return ACLevel.fifth.opacity
         }
-        return 1.0
     }
 }
 
